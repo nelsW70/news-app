@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import list from './list';
-import logo from './logo.svg';
+import { Grid, Row } from 'react-bootstrap';
 import './App.css';
 
 function isSearched(searchTerm) {
@@ -40,10 +40,16 @@ class App extends Component {
     return (
       <div className="App">
 
-        <Search
-          onChange={ this.searchValue }
-          value={ searchTerm }
-        >Search here</Search>
+        <Grid>
+          <Row>
+            <div className="jumbotron">
+              <Search
+                onChange={ this.searchValue }
+                value={ searchTerm }
+              >Search here</Search>
+            </div>
+          </Row>
+        </Grid>
 
         <Table
           list={ list }
