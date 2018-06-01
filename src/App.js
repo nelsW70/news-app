@@ -46,7 +46,7 @@ class App extends Component {
               <Search
                 onChange={ this.searchValue }
                 value={ searchTerm }
-              >Search here</Search>
+              >NEWSAPP</Search>
             </div>
           </Row>
         </Grid>
@@ -66,11 +66,11 @@ const Search = ({ onChange, value, children }) => {
   return (
     <form>
       <FormGroup>
-        { children }
+        <h1 style={{ fontWeight: 'bold' }}>{ children }</h1> <hr style={{ border: '2px solid black', width: '100px' }}/>
         <div className="input-group">
 
           <input
-            className="form-control width100"
+            className="form-control width100 searchForm"
             type="text"
             onChange={ onChange }
             value={ value }
@@ -78,7 +78,7 @@ const Search = ({ onChange, value, children }) => {
 
           <span className="input-group-btn">
             <button
-              className="btn btn-primary"
+              className="btn btn-primary searchBtn"
               type="submit"
             >
               Search
