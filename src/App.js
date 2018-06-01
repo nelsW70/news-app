@@ -21,12 +21,29 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      list,
-      searchTerm: ''
+      result: null,
+      searchTerm: DEFAULT_QUERY
     }
 
     this.removeItem = this.removeItem.bind(this);
     this.searchValue = this.searchValue.bind(this);
+    this.fetchTopStories = this.fetchTopStories.bind(this);
+    this.setTopStories = this.setTopStories.bind(this);
+  }
+
+  setTopStories(result) {
+    this.setState({ result: result });
+  }
+
+  fetchTopStories(searchTerm) {
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`)
+      .then(response => response.json())
+      .then(result => this.setTopStories(result))
+      .catch(e => e);
+  }
+
+  componentDidMount() {
+    this.fetchTopStories(this.state.searchTerm);
   }
 
   removeItem(id) {
@@ -41,9 +58,11 @@ class App extends Component {
 
   render() {
 
-    const { list, searchTerm } = this.state;
+    const { result, searchTerm } = this.state;
 
     console.log(this);
+
+    if (!result) {return null};
 
     return (
       <div>
@@ -60,7 +79,7 @@ class App extends Component {
         </Grid>
 
         <Table
-          list={ list }
+          list={ result.hits }
           searchTerm={ searchTerm }
           removeItem={ this.removeItem }
         />
