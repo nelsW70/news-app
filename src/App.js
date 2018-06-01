@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import list from './list';
+// import list from './list';
 import { Grid, Row, FormGroup } from 'react-bootstrap';
 
 const DEFAULT_QUERY = 'react';
@@ -47,8 +47,9 @@ class App extends Component {
   }
 
   removeItem(id) {
-    const updatedList = this.state.list.filter(item => item.objectID !== id);
-    this.setState({ list: updatedList });
+    const { result } = this.state;
+    const updatedList = result.hits.filter(item => item.objectID !== id);
+    this.setState({ result: {...result, hits: updatedList} })
   }
 
   searchValue(event) {
