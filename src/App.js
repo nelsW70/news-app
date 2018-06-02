@@ -29,6 +29,7 @@ class App extends Component {
     this.searchValue = this.searchValue.bind(this);
     this.fetchTopStories = this.fetchTopStories.bind(this);
     this.setTopStories = this.setTopStories.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
   setTopStories(result) {
@@ -36,7 +37,7 @@ class App extends Component {
   }
 
   fetchTopStories(searchTerm) {
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`)
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
       .then(response => response.json())
       .then(result => this.setTopStories(result))
       .catch(e => e);
@@ -44,6 +45,11 @@ class App extends Component {
 
   componentDidMount() {
     this.fetchTopStories(this.state.searchTerm);
+  }
+
+  onSubmit(event) {
+    this.fetchTopStories(this.state.searchTerm);
+    event.preventDefault();
   }
 
   removeItem(id) {
@@ -63,7 +69,7 @@ class App extends Component {
 
     console.log(this);
 
-    if (!result) {return null};
+    // if (!result) {return null};
 
     return (
       <div>
@@ -74,25 +80,28 @@ class App extends Component {
               <Search
                 onChange={ this.searchValue }
                 value={ searchTerm }
+                onSubmit={ this.onSubmit }
               >NEWSAPP</Search>
             </div>
           </Row>
         </Grid>
 
+        { result &&
         <Table
           list={ result.hits }
           searchTerm={ searchTerm }
           removeItem={ this.removeItem }
         />
+      }
 
       </div>
     );
   }
 }
 
-const Search = ({ onChange, value, children }) => {
+const Search = ({ onChange, value, children, onSubmit }) => {
   return (
-    <form>
+    <form onSubmit={ onSubmit }>
       <FormGroup>
         <h1 style={{ fontWeight: 'bold' }}>{ children }</h1> <hr style={{ border: '2px solid black', width: '100px' }}/>
         <div className="input-group">
@@ -123,7 +132,8 @@ const Table = ({ list, searchTerm, removeItem }) => {
   return (
       <div className="col-sm-10 col-sm-offset-1">
         {
-          list.filter( isSearched(searchTerm) ).map(item =>
+          // list.filter( isSearched(searchTerm) ).map(item =>
+          list.map(item =>
               <div key={ item.objectID }>
                 <h1>
                   <a href={ item.url }> { item.title }</a>
