@@ -3,12 +3,14 @@ import React, { Component } from 'react';
 import { Grid, Row, FormGroup } from 'react-bootstrap';
 
 const DEFAULT_QUERY = 'react';
+const DEFAULT_PAGE = 0;
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
+const PARAM_PAGE = 'page=';
 
 // const url = PATH_BASE + PATH_SEARCH + '?' + PARAM_SEARCH + DEFAULT_QUERY;
-const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}&${PARAM_PAGE}`;
 console.log(url);
 
 function isSearched(searchTerm) {
@@ -36,19 +38,20 @@ class App extends Component {
     this.setState({ result: result });
   }
 
-  fetchTopStories(searchTerm) {
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+  fetchTopStories(searchTerm, page) {
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}
+      &${PARAM_PAGE}${page}`)
       .then(response => response.json())
       .then(result => this.setTopStories(result))
       .catch(e => e);
   }
 
   componentDidMount() {
-    this.fetchTopStories(this.state.searchTerm);
+    this.fetchTopStories(this.state.searchTerm, DEFAULT_PAGE);
   }
 
   onSubmit(event) {
-    this.fetchTopStories(this.state.searchTerm);
+    this.fetchTopStories(this.state.searchTerm, DEFAULT_PAGE);
     event.preventDefault();
   }
 
@@ -66,6 +69,8 @@ class App extends Component {
   render() {
 
     const { result, searchTerm } = this.state;
+
+    const page = (result && result.page) || 0;
 
     console.log(this);
 
@@ -94,6 +99,14 @@ class App extends Component {
         />
       }
 
+      <div>
+
+      </div>
+        <Button
+          onClick={ () => this.fetchTopStories(searchTerm, page + 1) }
+        >
+          Load more
+        </Button>
       </div>
     );
   }
