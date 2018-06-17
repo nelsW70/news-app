@@ -38,6 +38,10 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+  checkTopStoriesSeachTerm(searchTerm) {
+    return !this.state.results[searchTerm];
+  }
+
   setTopStories(result) {
     const { hits, page } = result;
     // const oldHits = page !== 0 ? this.state.result.hits : [];
@@ -65,14 +69,18 @@ class App extends Component {
   onSubmit(event) {
     const { searchTerm } = this.state;
     this.setState({ searchKey: searchTerm });
-    this.fetchTopStories(this.state.searchTerm, DEFAULT_PAGE);
+
+    if (this.checkTopStoriesSeachTerm(searchTerm)) {
+      this.fetchTopStories(this.state.searchTerm, DEFAULT_PAGE);
+    }
     event.preventDefault();
   }
 
   removeItem(id) {
-    const { result } = this.state;
-    const updatedList = result.hits.filter(item => item.objectID !== id);
-    this.setState({ result: {...result, hits: updatedList} })
+    const { results, searchKey } = this.state;
+    const { hits, page } = results[searchKey];
+    const updatedList = hits.filter(item => item.objectID !== id);
+    this.setState({ results: {...results, [searchKey]: {hits: updatedList, page}} })
   }
 
   searchValue(event) {
@@ -107,13 +115,11 @@ class App extends Component {
           </Row>
         </Grid>
 
-        { results &&
         <Table
           list={ list }
           searchTerm={ searchTerm }
           removeItem={ this.removeItem }
         />
-      }
 
       <div className="text-center alert">
         <Button
