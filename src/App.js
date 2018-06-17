@@ -4,13 +4,16 @@ import { Grid, Row, FormGroup } from 'react-bootstrap';
 
 const DEFAULT_QUERY = 'react';
 const DEFAULT_PAGE = 0;
+const DEFAULT_HPP = 100;
+
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
 const PARAM_PAGE = 'page=';
+const PARAM_HPP = 'hitsPerPage=';
 
-// const url = PATH_BASE + PATH_SEARCH + '?' + PARAM_SEARCH + DEFAULT_QUERY;
-const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}&${PARAM_PAGE}`;
+const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}
+            &${PARAM_PAGE}&${PARAM_HPP}${DEFAULT_HPP}`;
 console.log(url);
 
 function isSearched(searchTerm) {
@@ -35,12 +38,15 @@ class App extends Component {
   }
 
   setTopStories(result) {
-    this.setState({ result: result });
+    const { hits, page } = result;
+    const oldHits = page !== 0 ? this.state.result.hits : [];
+    const updatedHits = [...oldHits, ...hits];
+    this.setState({ result: { hits: updatedHits, page } });
   }
 
   fetchTopStories(searchTerm, page) {
     fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}
-      &${PARAM_PAGE}${page}`)
+      &${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setTopStories(result))
       .catch(e => e);
@@ -99,14 +105,14 @@ class App extends Component {
         />
       }
 
-      <div>
-
-      </div>
+      <div className="text-center alert">
         <Button
-          onClick={ () => this.fetchTopStories(searchTerm, page + 1) }
-        >
+          className="btn btn-success"
+          onClick={ () => this.fetchTopStories(searchTerm, page + 1) }>
           Load more
         </Button>
+      </div>
+
       </div>
     );
   }
@@ -127,12 +133,12 @@ const Search = ({ onChange, value, children, onSubmit }) => {
           />
 
           <span className="input-group-btn">
-            <button
+            <Button
               className="btn btn-primary searchBtn"
               type="submit"
             >
               Search
-            </button>
+            </Button>
           </span>
 
         </div>
