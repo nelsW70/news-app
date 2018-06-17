@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import list from './list';
+import list from './list';
 import { Grid, Row, FormGroup } from 'react-bootstrap';
 
 const DEFAULT_QUERY = 'react';
@@ -26,7 +26,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      result: null,
+      results: null,
+      searchKey: '',
       searchTerm: DEFAULT_QUERY
     }
 
@@ -39,24 +40,31 @@ class App extends Component {
 
   setTopStories(result) {
     const { hits, page } = result;
-    const oldHits = page !== 0 ? this.state.result.hits : [];
+    // const oldHits = page !== 0 ? this.state.result.hits : [];
+    const { searchKey, results } = this.state;
+    const oldHits = results && results[searchKey] ? results[searchKey].hits : [];
+
     const updatedHits = [...oldHits, ...hits];
-    this.setState({ result: { hits: updatedHits, page } });
+
+    this.setState({ results: { ...results, [searchKey]: {hits: updatedHits, page} }});
   }
 
   fetchTopStories(searchTerm, page) {
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}
-      &${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setTopStories(result))
       .catch(e => e);
   }
 
   componentDidMount() {
-    this.fetchTopStories(this.state.searchTerm, DEFAULT_PAGE);
+    const { searchTerm } = this.state;
+    this.setState({ searchKey: searchTerm });
+    this.fetchTopStories(searchTerm, DEFAULT_PAGE);
   }
 
   onSubmit(event) {
+    const { searchTerm } = this.state;
+    this.setState({ searchKey: searchTerm });
     this.fetchTopStories(this.state.searchTerm, DEFAULT_PAGE);
     event.preventDefault();
   }
@@ -74,9 +82,11 @@ class App extends Component {
 
   render() {
 
-    const { result, searchTerm } = this.state;
+    const { results, searchTerm, searchKey } = this.state;
 
-    const page = (result && result.page) || 0;
+    const page = (results && results[searchKey] && results[searchKey].page) || 0;
+
+    const list = (results && results[searchKey] && results[searchKey].hits) || [];
 
     console.log(this);
 
@@ -97,9 +107,9 @@ class App extends Component {
           </Row>
         </Grid>
 
-        { result &&
+        { results &&
         <Table
-          list={ result.hits }
+          list={ list }
           searchTerm={ searchTerm }
           removeItem={ this.removeItem }
         />
