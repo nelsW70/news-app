@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import list from './list';
 import { Grid, Row, FormGroup } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import {
   DEFAULT_QUERY,
   DEFAULT_PAGE,
@@ -196,12 +197,35 @@ const Table = ({ list, searchTerm, removeItem }) => {
     )
   }
 
+  Table.propTypes = {
+    list: PropTypes.arrayOf(
+      PropTypes.shape({
+        objectID: PropTypes.string.isRequired,
+        author: PropTypes.string,
+        url: PropTypes.string,
+        num_comments: PropTypes.number,
+        points: PropTypes.number
+      })
+    ).isRequired,
+    removeItem: PropTypes.func.isRequired,
+  }
+
 const Button = ({ onClick, children, className='' }) =>
   <button
-    className={className}
+    className={ className }
     onClick={ onClick } >
     { children }
   </button>
+
+  Button.PropTypes = {
+    onClick: PropTypes.func.isRequired,
+    className: PropTypes.string,
+    children: PropTypes.node
+  }
+
+  Button.defaultProps = {
+    className: ''
+  }
 
 
 export default App;
