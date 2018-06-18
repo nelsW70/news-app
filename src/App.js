@@ -208,27 +208,35 @@ const Table = ({ list, searchTerm, removeItem, sortKey, onSort }) => {
   return (
       <div className="col-sm-10 col-sm-offset-1">
 
-      <div>
+      <div className="text-center">
+
+        <hr />
 
         <Sort
+          className="btn btn-xs btn-default sortBtn"
           sortKey={ 'TITLE'}
           onSort={ onSort }
         >Title</Sort>
 
         <Sort
+          className="btn btn-xs btn-default sortBtn"
           sortKey={ 'AUTHOR'}
           onSort={ onSort }
         >Author</Sort>
 
         <Sort
+          className="btn btn-xs btn-default sortBtn"
           sortKey={ 'COMMENTS'}
           onSort={ onSort }
         >Comments</Sort>
 
         <Sort
+          className="btn btn-xs btn-default sortBtn"
           sortKey={ 'POINTS'}
           onSort={ onSort }
         >Points</Sort>
+
+        <hr />
 
       </div>
 
@@ -295,8 +303,9 @@ const Button = ({ onClick, children, className='' }) =>
 
   const ButtonWithLoading = withLoading(Button);
 
-  const Sort = ({ sortKey, onSort, children }) =>
+  const Sort = ({ sortKey, onSort, children, className }) =>
     <Button
+    className={ className }
     onClick={ () => onSort(sortKey) }>
       { children }
     </Button>
