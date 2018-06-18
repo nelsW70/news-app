@@ -5,20 +5,28 @@ body {
 }
 
 .jumbotron {
-  background: linear-gradient(to right, red, yellow);
+  background: linear-gradient(to right, crimson, maroon);
   border-radius: 0 !important;
 }
 
 .searchForm {
-  height: 80px;
-  font-size: 50px;
+  height: 40px;
+  font-size: 25px;
 }
 
 .searchBtn {
-  height: 80px;
+  height: 40px;
   width: 200px;
 }
 
 .btn {
   margin-left: 5px;
+}
+
+h1 a {
+  font-size: 20px;
+}
+
+h4 {
+  font-size: 16px;
 }

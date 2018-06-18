@@ -139,7 +139,12 @@ class App extends Component {
   }
 }
 
-const Search = ({ onChange, value, children, onSubmit }) => {
+class Search extends Component {
+  componentDidMount() {
+    this.input.focus();
+  }
+  render() {
+  const { onChange, value, children, onSubmit } = this.props;
   return (
     <form onSubmit={ onSubmit }>
       <FormGroup>
@@ -151,6 +156,7 @@ const Search = ({ onChange, value, children, onSubmit }) => {
             type="text"
             onChange={ onChange }
             value={ value }
+            ref={(node) => { this.input = node } }
           />
 
           <span className="input-group-btn">
@@ -166,6 +172,7 @@ const Search = ({ onChange, value, children, onSubmit }) => {
       </FormGroup>
     </form>
   )
+  }
 }
 
 const Table = ({ list, searchTerm, removeItem }) => {
@@ -182,7 +189,7 @@ const Table = ({ list, searchTerm, removeItem }) => {
 
                   { item.author} | { item.num_comments } Comments | { item.points } Points
                   <Button
-                    className="btn btn-danger btn-xs"
+                    className="btn btn-warning btn-xs"
                     type="button"
                     onClick={ () => removeItem(item.objectID) }>
                     Remove me
