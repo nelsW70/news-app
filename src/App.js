@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import list from './list';
 import { Grid, Row, FormGroup } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import { sortBy } from 'lodash';
 import {
   DEFAULT_QUERY,
   DEFAULT_PAGE,
@@ -13,6 +14,14 @@ import {
   PARAM_HPP }
   from './constants/index';
 
+const SORTS = {
+  NONE: list => list,
+  TITLE: list => sortBy(list, 'title'),
+  AUTHOR: list => sortBy(list, 'author'),
+  COMMENTS: list => sortBy(list, 'num_comments').reverse(),
+  POINTS: list => sortBy(list, 'points').reverse(),
+}
+
 const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}
             &${PARAM_PAGE}&${PARAM_HPP}${DEFAULT_HPP}`;
 console.log(url);
@@ -23,6 +32,9 @@ function isSearched(searchTerm) {
   }
 }
 
+const withLoading = (Component) => ({ isLoading, ...rest }) =>
+  isLoading ? <Loading /> : <Component {...rest} />
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +43,7 @@ class App extends Component {
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
       isLoading: false,
+      sortKey: 'NONE'
     }
 
     this.removeItem = this.removeItem.bind(this);
@@ -38,6 +51,11 @@ class App extends Component {
     this.fetchTopStories = this.fetchTopStories.bind(this);
     this.setTopStories = this.setTopStories.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
+    this.onSort = this.onSort.bind(this);
+  }
+
+  onSort(sortKey){
+    this.setState({ sortKey });
   }
 
   checkTopStoriesSeachTerm(searchTerm) {
@@ -97,7 +115,7 @@ class App extends Component {
 
   render() {
 
-    const { results, searchTerm, searchKey, isLoading } = this.state;
+    const { results, searchTerm, searchKey, isLoading, sortKey } = this.state;
 
     const page = (results && results[searchKey] && results[searchKey].page) || 0;
 
@@ -126,19 +144,20 @@ class App extends Component {
           <Row>
           <Table
             list={ list }
+            sortKey={ sortKey }
+            onSort={ this.onSort }
             searchTerm={ searchTerm }
             removeItem={ this.removeItem }
           />
 
         <div className="text-center alert">
 
-          { isLoading ? <Loading/> :
-            <Button
+            <ButtonWithLoading
+              isLoading={ isLoading }
               className="btn btn-success"
               onClick={ () => this.fetchTopStories(searchTerm, page + 1) }>
               Load more
-            </Button>
-          }
+            </ButtonWithLoading>
 
         </div>
         </Row>
@@ -185,12 +204,12 @@ class Search extends Component {
   }
 }
 
-const Table = ({ list, searchTerm, removeItem }) => {
+const Table = ({ list, searchTerm, removeItem, sortKey }) => {
   return (
       <div className="col-sm-10 col-sm-offset-1">
         {
           // list.filter( isSearched(searchTerm) ).map(item =>
-          list.map(item =>
+          SORTS['POINTS'](list).map(item =>
               <div key={ item.objectID }>
                 <h1>
                   <a href={ item.url }> { item.title }</a>
@@ -245,7 +264,11 @@ const Button = ({ onClick, children, className='' }) =>
   }
 
   const Loading = () =>
-    <div>Loading...</div>
+    <div>
+      <h2>Loading...</h2>
+    </div>
+
+  const ButtonWithLoading = withLoading(Button);
 
 
 export default App;
