@@ -204,12 +204,37 @@ class Search extends Component {
   }
 }
 
-const Table = ({ list, searchTerm, removeItem, sortKey }) => {
+const Table = ({ list, searchTerm, removeItem, sortKey, onSort }) => {
   return (
       <div className="col-sm-10 col-sm-offset-1">
+
+      <div>
+
+        <Sort
+          sortKey={ 'TITLE'}
+          onSort={ onSort }
+        >Title</Sort>
+
+        <Sort
+          sortKey={ 'AUTHOR'}
+          onSort={ onSort }
+        >Author</Sort>
+
+        <Sort
+          sortKey={ 'COMMENTS'}
+          onSort={ onSort }
+        >Comments</Sort>
+
+        <Sort
+          sortKey={ 'POINTS'}
+          onSort={ onSort }
+        >Points</Sort>
+
+      </div>
+
         {
           // list.filter( isSearched(searchTerm) ).map(item =>
-          SORTS['POINTS'](list).map(item =>
+          SORTS[sortKey](list).map(item =>
               <div key={ item.objectID }>
                 <h1>
                   <a href={ item.url }> { item.title }</a>
@@ -270,5 +295,10 @@ const Button = ({ onClick, children, className='' }) =>
 
   const ButtonWithLoading = withLoading(Button);
 
+  const Sort = ({ sortKey, onSort, children }) =>
+    <Button
+    onClick={ () => onSort(sortKey) }>
+      { children }
+    </Button>
 
 export default App;
