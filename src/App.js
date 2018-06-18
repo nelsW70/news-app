@@ -43,7 +43,8 @@ class App extends Component {
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
       isLoading: false,
-      sortKey: 'NONE'
+      sortKey: 'NONE',
+      isSortReverse: false
     }
 
     this.removeItem = this.removeItem.bind(this);
@@ -55,7 +56,8 @@ class App extends Component {
   }
 
   onSort(sortKey){
-    this.setState({ sortKey });
+    const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
+    this.setState({ sortKey, isSortReverse });
   }
 
   checkTopStoriesSeachTerm(searchTerm) {
@@ -115,7 +117,8 @@ class App extends Component {
 
   render() {
 
-    const { results, searchTerm, searchKey, isLoading, sortKey } = this.state;
+    const { results, searchTerm, searchKey,
+            isLoading, sortKey, isSortReverse } = this.state;
 
     const page = (results && results[searchKey] && results[searchKey].page) || 0;
 
@@ -145,6 +148,7 @@ class App extends Component {
           <Table
             list={ list }
             sortKey={ sortKey }
+            isSortReverse={ isSortReverse }
             onSort={ this.onSort }
             searchTerm={ searchTerm }
             removeItem={ this.removeItem }
@@ -204,7 +208,11 @@ class Search extends Component {
   }
 }
 
-const Table = ({ list, searchTerm, removeItem, sortKey, onSort }) => {
+const Table = ({ list, searchTerm, removeItem, sortKey, onSort, isSortReverse }) => {
+
+  const sortedList = SORTS[sortKey](list);
+  const reverseSortedList = isSortReverse ? sortedList.reverse() : sortedList;
+
   return (
       <div className="col-sm-10 col-sm-offset-1">
 
@@ -242,7 +250,7 @@ const Table = ({ list, searchTerm, removeItem, sortKey, onSort }) => {
 
         {
           // list.filter( isSearched(searchTerm) ).map(item =>
-          SORTS[sortKey](list).map(item =>
+          reverseSortedList.map(item =>
               <div key={ item.objectID }>
                 <h1>
                   <a href={ item.url }> { item.title }</a>
