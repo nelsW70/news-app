@@ -222,26 +222,37 @@ const Table = ({ list, searchTerm, removeItem, sortKey, onSort, isSortReverse })
 
         <Sort
           className="btn btn-xs btn-default sortBtn"
+          sortKey={ 'NONE'}
+          onSort={ onSort }
+          activeSortKey={ sortKey }
+        >Default</Sort>
+
+        <Sort
+          className="btn btn-xs btn-default sortBtn"
           sortKey={ 'TITLE'}
           onSort={ onSort }
+          activeSortKey={ sortKey }
         >Title</Sort>
 
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'AUTHOR'}
           onSort={ onSort }
+          activeSortKey={ sortKey }
         >Author</Sort>
 
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'COMMENTS'}
           onSort={ onSort }
+          activeSortKey={ sortKey }
         >Comments</Sort>
 
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'POINTS'}
           onSort={ onSort }
+          activeSortKey={ sortKey }
         >Points</Sort>
 
         <hr />
@@ -311,11 +322,23 @@ const Button = ({ onClick, children, className='' }) =>
 
   const ButtonWithLoading = withLoading(Button);
 
-  const Sort = ({ sortKey, onSort, children, className }) =>
-    <Button
-    className={ className }
-    onClick={ () => onSort(sortKey) }>
-      { children }
-    </Button>
+  const Sort = ({ sortKey, onSort, children, className, activeSortKey }) =>
+  {
+
+    const sortClass = ['btn default'];
+
+    if (sortKey === activeSortKey) {
+      sortClass.push('btn btn-primary');
+    }
+
+    return(
+      <Button
+        className={ sortClass.join(' ') }
+        onClick={ () => onSort(sortKey) }>
+        { children }
+      </Button>
+    )
+  }
+
 
 export default App;
