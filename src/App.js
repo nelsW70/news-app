@@ -42,9 +42,7 @@ class App extends Component {
       results: null,
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
-      isLoading: false,
-      sortKey: 'NONE',
-      isSortReverse: false
+      isLoading: false
     }
 
     this.removeItem = this.removeItem.bind(this);
@@ -52,12 +50,6 @@ class App extends Component {
     this.fetchTopStories = this.fetchTopStories.bind(this);
     this.setTopStories = this.setTopStories.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.onSort = this.onSort.bind(this);
-  }
-
-  onSort(sortKey){
-    const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
-    this.setState({ sortKey, isSortReverse });
   }
 
   checkTopStoriesSeachTerm(searchTerm) {
@@ -118,7 +110,7 @@ class App extends Component {
   render() {
 
     const { results, searchTerm, searchKey,
-            isLoading, sortKey, isSortReverse } = this.state;
+            isLoading } = this.state;
 
     const page = (results && results[searchKey] && results[searchKey].page) || 0;
 
@@ -147,10 +139,6 @@ class App extends Component {
           <Row>
           <Table
             list={ list }
-            sortKey={ sortKey }
-            isSortReverse={ isSortReverse }
-            onSort={ this.onSort }
-            searchTerm={ searchTerm }
             removeItem={ this.removeItem }
           />
 
@@ -208,10 +196,29 @@ class Search extends Component {
   }
 }
 
-const Table = ({ list, searchTerm, removeItem, sortKey, onSort, isSortReverse }) => {
+class Table extends Component {
 
-  const sortedList = SORTS[sortKey](list);
-  const reverseSortedList = isSortReverse ? sortedList.reverse() : sortedList;
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      sortKey: 'NONE',
+      isSortReverse: false
+    }
+
+    this.onSort = this.onSort.bind(this);
+  }
+
+  onSort(sortKey){
+    const isSortReverse = this.state.sortKey === sortKey && !this.state.isSortReverse;
+    this.setState({ sortKey, isSortReverse });
+  }
+
+  render() {
+    const { list, removeItem } = this.props;
+    const { sortKey, isSortReverse } = this.state;
+    const sortedList = SORTS[sortKey](list);
+    const reverseSortedList = isSortReverse ? sortedList.reverse() : sortedList;
 
   return (
       <div className="col-sm-10 col-sm-offset-1">
@@ -223,35 +230,35 @@ const Table = ({ list, searchTerm, removeItem, sortKey, onSort, isSortReverse })
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'NONE'}
-          onSort={ onSort }
+          onSort={ this.onSort }
           activeSortKey={ sortKey }
         >Default</Sort>
 
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'TITLE'}
-          onSort={ onSort }
+          onSort={ this.onSort }
           activeSortKey={ sortKey }
         >Title</Sort>
 
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'AUTHOR'}
-          onSort={ onSort }
+          onSort={ this.onSort }
           activeSortKey={ sortKey }
         >Author</Sort>
 
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'COMMENTS'}
-          onSort={ onSort }
+          onSort={ this.onSort }
           activeSortKey={ sortKey }
         >Comments</Sort>
 
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'POINTS'}
-          onSort={ onSort }
+          onSort={ this.onSort }
           activeSortKey={ sortKey }
         >Points</Sort>
 
@@ -283,6 +290,7 @@ const Table = ({ list, searchTerm, removeItem, sortKey, onSort, isSortReverse })
         }
       </div>
     )
+    }
   }
 
   Table.propTypes = {
