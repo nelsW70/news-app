@@ -42,13 +42,13 @@ const updateTopStories = (hits, page) => prevState => {
   }
 }
 
-class App extends Component {
+class Javascript extends Component {
   constructor(props) {
     super(props);
     this.state = {
       results: null,
       searchKey: '',
-      searchTerm: DEFAULT_QUERY,
+      searchTerm: 'javascript',
       isLoading: false
     }
 
@@ -122,18 +122,6 @@ class App extends Component {
     return (
       <div>
 
-        <Grid fluid>
-          <Row>
-            <div className="jumbotron text-center">
-              <Search
-                onChange={ this.searchValue }
-                value={ searchTerm }
-                onSubmit={ this.onSubmit }
-              >NEWSAPP</Search>
-            </div>
-          </Row>
-        </Grid>
-
         <Grid>
           <Row>
           <Table
@@ -161,4 +149,4 @@ class App extends Component {
 
 const ButtonWithLoading = withLoading(Button);
 
-export default App;
+export default Javascript;

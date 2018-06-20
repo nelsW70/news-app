@@ -40,8 +40,6 @@ class Table extends Component {
 
       <div className="text-center">
 
-        <hr />
-
         <Sort
           className="btn btn-xs btn-default sortBtn"
           sortKey={ 'NONE'}
